@@ -19,8 +19,9 @@ const (
 )
 
 type Pos struct {
-	X int
-	Y int
+	X   int
+	Y   int
+	Aim int
 }
 
 type Command struct {
@@ -79,6 +80,25 @@ func SolvePartOne(cmds []Command) int {
 
 }
 
+func SolvePartTwo(cmds []Command) int {
+	var pos Pos
+
+	for _, c := range cmds {
+		switch c.Action {
+		case ActionForward:
+			pos.X += c.Val
+			pos.Y += (pos.Aim * c.Val)
+		case ActionDown:
+			pos.Aim += c.Val
+		case ActionUp:
+			pos.Aim -= c.Val
+		}
+	}
+
+	return pos.X * pos.Y
+
+}
+
 func main() {
 	data, err := common.ReadInput("input.txt")
 	if err != nil {
@@ -93,5 +113,8 @@ func main() {
 
 	res := SolvePartOne(cmds)
 	fmt.Println(res)
+
+	res2 := SolvePartTwo(cmds)
+	fmt.Println(res2)
 
 }
