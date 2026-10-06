@@ -14,9 +14,21 @@ type Pos struct {
 }
 
 type Board struct {
-	ValMp map[int]Pos
-	RowMp map[int]int // key: row#, value: count (start at 5)
-	ColMp map[int]int // key: col#, value: count (start at 5)
+	ValMp   map[int]Pos // if it's used, delete from map
+	RowMp   map[int]int // key: row#, value: count (start at 5)
+	ColMp   map[int]int // key: col#, value: count (start at 5)
+	UsedVal []int
+}
+
+func (b Board) TotalizeUnusedNumbers() int {
+	var res int
+
+	for val := range b.ValMp {
+		res += val
+	}
+
+	return res
+
 }
 
 func GetNumbers(data []byte) ([]int, error) {
