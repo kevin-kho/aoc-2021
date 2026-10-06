@@ -141,6 +141,40 @@ func SolvePartOne(numbers []int, boards []Board) int {
 
 }
 
+func SolvePartTwo(numbers []int, boards []Board) int {
+
+	boardFinished := make(map[int]bool)
+
+	for _, num := range numbers {
+
+		for i, board := range boards {
+
+			if boardFinished[i] {
+				continue
+			}
+
+			if pos, ok := board.ValMp[num]; ok {
+				delete(board.ValMp, num)
+
+				if board.RowMp[pos.Y] == 1 || board.ColMp[pos.X] == 1 {
+					boardFinished[i] = true
+					if len(boardFinished) == len(boards) {
+						return num * board.TotalizeUnusedNumbers()
+					}
+				}
+
+				board.RowMp[pos.Y]--
+				board.ColMp[pos.X]--
+			}
+
+		}
+
+	}
+
+	// No board won
+	return -1
+}
+
 func main() {
 	// numberData, err := common.ReadInput("inputNumbersExample.txt")
 	numberData, err := common.ReadInput("inputNumbers.txt")
@@ -166,5 +200,8 @@ func main() {
 
 	res := SolvePartOne(numbers, boards)
 	fmt.Println(res)
+
+	res2 := SolvePartTwo(numbers, boards)
+	fmt.Println(res2)
 
 }
