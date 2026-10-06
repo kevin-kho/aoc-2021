@@ -25,6 +25,11 @@ type GammaEpsilon struct {
 	Epsilon int64
 }
 
+type Atmosphere struct {
+	Oxygen int64
+	CO2    int64
+}
+
 func GetBinIntArr(data []byte) (BinIntArr, error) {
 	var res []BinInt
 	var bitSize int
@@ -97,6 +102,11 @@ func GetGammaEpsilon(binIntArr BinIntArr) (GammaEpsilon, error) {
 
 }
 
+func GetAtmosphere(binIntArr BinIntArr) {
+
+	binIntArr.Arr = slices.Clone(binIntArr.Arr)
+}
+
 func SolvePartOne(binIntArr BinIntArr) (int64, error) {
 	var res int64
 	ge, err := GetGammaEpsilon(binIntArr)
@@ -105,6 +115,10 @@ func SolvePartOne(binIntArr BinIntArr) (int64, error) {
 	}
 
 	return ge.Gamma * ge.Epsilon, nil
+
+}
+
+func SolvePartTwo(binIntArr BinIntArr) {
 
 }
 
