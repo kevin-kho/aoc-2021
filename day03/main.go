@@ -1,0 +1,122 @@
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"log"
+	"slices"
+	"strconv"
+
+	"github.com/kevin-kho/aoc-utilities/common"
+)
+
+type BinIntArr struct {
+	IntArr  []int64
+	BitSize int
+}
+
+type GammaEpsilon struct {
+	Gamma   int64
+	Epsilon int64
+}
+
+func GetBinIntArr(data []byte) (BinIntArr, error) {
+	var res []int64
+	var bitSize int
+
+	for entry := range bytes.Lines(data) {
+		entry = bytes.TrimSpace(entry)
+		bitSize = len(string(entry))
+		i, err := strconv.ParseInt(string(entry), 2, 16)
+		if err != nil {
+			return BinIntArr{}, err
+		}
+
+		res = append(res, i)
+	}
+
+	return BinIntArr{
+		IntArr:  res,
+		BitSize: bitSize,
+	}, nil
+
+}
+
+func GetGammaEpsilon(binIntArr BinIntArr) (GammaEpsilon, error) {
+
+	n := len(binIntArr.IntArr)
+
+	var gammaByte []byte
+	var epsilonByte []byte
+
+	for range binIntArr.BitSize {
+		var count int64
+
+		for i, num := range binIntArr.IntArr {
+			count += num & 1
+			num = num >> 1
+			binIntArr.IntArr[i] = num
+		}
+
+		if count > int64(n)/2 {
+			gammaByte = append(gammaByte, '1')
+			epsilonByte = append(epsilonByte, '0')
+		} else {
+			gammaByte = append(gammaByte, '0')
+			epsilonByte = append(epsilonByte, '1')
+		}
+
+	}
+
+	slices.Reverse(gammaByte)
+	slices.Reverse(epsilonByte)
+
+	gamma, err := strconv.ParseInt(string(gammaByte), 2, 16)
+	if err != nil {
+		return GammaEpsilon{}, err
+	}
+
+	epsilon, err := strconv.ParseInt(string(epsilonByte), 2, 16)
+	if err != nil {
+		return GammaEpsilon{}, err
+	}
+
+	return GammaEpsilon{
+		Gamma:   gamma,
+		Epsilon: epsilon,
+	}, nil
+
+}
+
+func SolvePartOne(binIntArr BinIntArr) (int64, error) {
+	var res int64
+	ge, err := GetGammaEpsilon(binIntArr)
+	if err != nil {
+		return res, err
+	}
+
+	return ge.Gamma * ge.Epsilon, nil
+
+}
+
+func main() {
+
+	// data, err := common.ReadInput("inputExample.txt")
+	data, err := common.ReadInput("input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	data = common.TrimNewLineSuffix(data)
+
+	binIntArr, err := GetBinIntArr(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := SolvePartOne(binIntArr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(res)
+
+}
