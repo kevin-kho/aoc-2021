@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -115,12 +116,34 @@ func GetBoards(data []byte) ([]Board, error) {
 
 }
 
-func SolvePartOne(numbers []int, boards []Board) {
+func SolvePartOne(numbers []int, boards []Board) int {
+
+	for _, num := range numbers {
+		for _, board := range boards {
+
+			if pos, ok := board.ValMp[num]; ok {
+				delete(board.ValMp, num)
+
+				if board.RowMp[pos.Y] == 1 || board.ColMp[pos.X] == 1 {
+					return num * board.TotalizeUnusedNumbers()
+				}
+
+				board.RowMp[pos.Y]--
+				board.ColMp[pos.X]--
+			}
+
+		}
+
+	}
+
+	// No board won
+	return -1
 
 }
 
 func main() {
-	numberData, err := common.ReadInput("inputNumbersExample.txt")
+	// numberData, err := common.ReadInput("inputNumbersExample.txt")
+	numberData, err := common.ReadInput("inputNumbers.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,7 +153,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	boardData, err := common.ReadInput("inputBoardsExample.txt")
+	// boardData, err := common.ReadInput("inputBoardsExample.txt")
+	boardData, err := common.ReadInput("inputBoards.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -140,6 +164,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	SolvePartOne(numbers, boards)
+	res := SolvePartOne(numbers, boards)
+	fmt.Println(res)
 
 }
