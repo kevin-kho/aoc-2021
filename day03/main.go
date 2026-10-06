@@ -102,9 +102,55 @@ func GetGammaEpsilon(binIntArr BinIntArr) (GammaEpsilon, error) {
 
 }
 
-func GetAtmosphere(binIntArr BinIntArr) {
+func GetAtmosphere(binIntArr BinIntArr) int64 {
 
-	binIntArr.Arr = slices.Clone(binIntArr.Arr)
+	oxy := slices.Clone(binIntArr.Arr)
+	co2 := slices.Clone(binIntArr.Arr)
+
+	for i := range binIntArr.BitSize {
+		if len(oxy) == 1 {
+			break
+		}
+
+		// handle oxygen
+		oxyMp := make(map[byte][]BinInt)
+		for _, num := range oxy {
+			char := num.Str[i]
+			oxyMp[char] = append(oxyMp[char], num)
+		}
+		// determine next oxygen
+		switch len(oxyMp['1']) >= len(oxyMp['0']) {
+		case true:
+			oxy = oxyMp['1']
+		case false:
+			oxy = oxyMp['0']
+		}
+	}
+
+	for i := range binIntArr.BitSize {
+		if len(co2) == 1 {
+			break
+		}
+
+		// handle co2
+		co2Mp := make(map[byte][]BinInt)
+		for _, num := range co2 {
+			char := num.Str[i]
+			co2Mp[char] = append(co2Mp[char], num)
+		}
+
+		// determine next co2
+		switch len(co2Mp['0']) <= len(co2Mp['1']) {
+		case true:
+			co2 = co2Mp['0']
+		case false:
+			co2 = co2Mp['1']
+		}
+
+	}
+
+	return oxy[0].Int * co2[0].Int
+
 }
 
 func SolvePartOne(binIntArr BinIntArr) (int64, error) {
@@ -141,5 +187,8 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(res)
+
+	res2 := GetAtmosphere(binIntArr)
+	fmt.Println(res2)
 
 }
