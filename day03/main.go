@@ -10,8 +10,13 @@ import (
 	"github.com/kevin-kho/aoc-utilities/common"
 )
 
+type BinInt struct {
+	Str string
+	Int int64
+}
+
 type BinIntArr struct {
-	IntArr  []int64
+	Arr     []BinInt
 	BitSize int
 }
 
@@ -21,7 +26,7 @@ type GammaEpsilon struct {
 }
 
 func GetBinIntArr(data []byte) (BinIntArr, error) {
-	var res []int64
+	var res []BinInt
 	var bitSize int
 
 	for entry := range bytes.Lines(data) {
@@ -32,11 +37,14 @@ func GetBinIntArr(data []byte) (BinIntArr, error) {
 			return BinIntArr{}, err
 		}
 
-		res = append(res, i)
+		res = append(res, BinInt{
+			Str: string(entry),
+			Int: i,
+		})
 	}
 
 	return BinIntArr{
-		IntArr:  res,
+		Arr:     res,
 		BitSize: bitSize,
 	}, nil
 
@@ -44,7 +52,8 @@ func GetBinIntArr(data []byte) (BinIntArr, error) {
 
 func GetGammaEpsilon(binIntArr BinIntArr) (GammaEpsilon, error) {
 
-	n := len(binIntArr.IntArr)
+	n := len(binIntArr.Arr)
+	binIntArr.Arr = slices.Clone(binIntArr.Arr)
 
 	var gammaByte []byte
 	var epsilonByte []byte
@@ -52,10 +61,10 @@ func GetGammaEpsilon(binIntArr BinIntArr) (GammaEpsilon, error) {
 	for range binIntArr.BitSize {
 		var count int64
 
-		for i, num := range binIntArr.IntArr {
-			count += num & 1
-			num = num >> 1
-			binIntArr.IntArr[i] = num
+		for i, binInt := range binIntArr.Arr {
+			count += binInt.Int & 1
+			binInt.Int = binInt.Int >> 1
+			binIntArr.Arr[i] = binInt
 		}
 
 		if count > int64(n)/2 {
