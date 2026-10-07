@@ -88,18 +88,21 @@ func CreateLines(data []byte) ([]Line, error) {
 
 }
 
-func FilterStraightLines(lines []Line) []Line {
-	var res []Line
+func FilterLines(lines []Line) ([]Line, []Line) {
+	var straight []Line
+	var diagonal []Line
 	for _, l := range lines {
 		st := l.Start
 		ed := l.End
 
 		if st.X == ed.X || st.Y == ed.Y {
-			res = append(res, l)
+			straight = append(straight, l)
+		} else {
+			diagonal = append(diagonal, l)
 		}
 	}
 
-	return res
+	return straight, diagonal
 
 }
 
@@ -107,7 +110,7 @@ func SolvePartOne(lines []Line) int {
 
 	mp := make(map[Pos]int)
 
-	straightLines := FilterStraightLines(lines)
+	straightLines, _ := FilterLines(lines)
 	for _, l := range straightLines {
 
 		d := l.GetVector()
