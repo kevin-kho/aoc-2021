@@ -31,6 +31,16 @@ type Pos struct {
 	Y int
 }
 
+func (p Pos) GetGcd() int {
+	a, b := common.IntAbs(p.X), common.IntAbs(p.Y)
+	for b != 0 {
+		a, b = b, a%b
+	}
+
+	return a
+
+}
+
 func CreatePos(posStr string) (Pos, error) {
 	var res Pos
 	xStr, yStr, _ := strings.Cut(posStr, ",")
@@ -100,25 +110,20 @@ func SolvePartOne(lines []Line) int {
 	straightLines := FilterStraightLines(lines)
 	for _, l := range straightLines {
 
-		vec := l.GetVector()
-		// either dx or dy is guaranteed to be 0
-		dx := common.IntAbs(vec.X)
-		dy := common.IntAbs(vec.Y)
+		d := l.GetVector()
+		gcd := d.GetGcd()
 
-		p := Pos{
-			X: min(l.Start.X, l.End.X),
-			Y: min(l.Start.Y, l.End.Y),
-		}
+		d.X = d.X / gcd
+		d.Y = d.Y / gcd
+
+		p := l.Start
 
 		mp[p]++
 
-		for range dx {
-			p.X += 1
-			mp[p]++
-		}
+		for p != l.End {
+			p.X += d.X
+			p.Y += d.Y
 
-		for range dy {
-			p.Y += 1
 			mp[p]++
 		}
 
