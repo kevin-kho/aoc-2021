@@ -15,6 +15,17 @@ type Line struct {
 	End   Pos
 }
 
+func (l Line) GetVector() Pos {
+	vecX := l.End.X - l.Start.X
+	vecY := l.End.Y - l.Start.Y
+
+	return Pos{
+		X: vecX,
+		Y: vecY,
+	}
+
+}
+
 type Pos struct {
 	X int
 	Y int
@@ -67,8 +78,66 @@ func CreateLines(data []byte) ([]Line, error) {
 
 }
 
+func FilterStraightLines(lines []Line) []Line {
+	var res []Line
+	for _, l := range lines {
+		st := l.Start
+		ed := l.End
+
+		if st.X == ed.X || st.Y == ed.Y {
+			res = append(res, l)
+		}
+	}
+
+	return res
+
+}
+
+func SolvePartOne(lines []Line) int {
+
+	mp := make(map[Pos]int)
+
+	straightLines := FilterStraightLines(lines)
+	for _, l := range straightLines {
+
+		vec := l.GetVector()
+		// either dx or dy is guaranteed to be 0
+		dx := common.IntAbs(vec.X)
+		dy := common.IntAbs(vec.Y)
+
+		p := Pos{
+			X: min(l.Start.X, l.End.X),
+			Y: min(l.Start.Y, l.End.Y),
+		}
+
+		mp[p]++
+
+		for range dx {
+			p.X += 1
+			mp[p]++
+		}
+
+		for range dy {
+			p.Y += 1
+			mp[p]++
+		}
+
+	}
+
+	var count int
+	for _, ct := range mp {
+		if ct > 1 {
+			count++
+		}
+	}
+
+	return count
+
+}
+
 func main() {
-	data, err := common.ReadInput("inputExample.txt")
+	// data, err := common.ReadInput("inputExample.txt")
+	data, err := common.ReadInput("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,6 +147,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(lines)
+	res := SolvePartOne(lines)
+	fmt.Println(res)
 
 }
