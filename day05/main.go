@@ -143,6 +143,37 @@ func SolvePartOne(lines []Line) int {
 
 }
 
+func SolvePartTwo(lines []Line) int {
+	mp := make(map[Pos]int)
+
+	for _, l := range lines {
+		d := l.GetVector()
+		gcd := d.GetGcd()
+
+		d.X = d.X / gcd
+		d.Y = d.Y / gcd
+
+		p := l.Start
+
+		mp[p]++
+		for p != l.End {
+			p.X += d.X
+			p.Y += d.Y
+			mp[p]++
+		}
+	}
+
+	var count int
+	for _, ct := range mp {
+		if ct > 1 {
+			count++
+		}
+	}
+
+	return count
+
+}
+
 func main() {
 	// data, err := common.ReadInput("inputExample.txt")
 	data, err := common.ReadInput("input.txt")
@@ -157,5 +188,8 @@ func main() {
 
 	res := SolvePartOne(lines)
 	fmt.Println(res)
+
+	res2 := SolvePartTwo(lines)
+	fmt.Println(res2)
 
 }
