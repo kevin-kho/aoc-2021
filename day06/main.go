@@ -120,4 +120,7 @@ func main() {
 	resMemo := SolveMemo(intArr, 80)
 	fmt.Println(resMemo)
 
+	res2 := SolveMemo(intArr, 256)
+	fmt.Println(res2)
+
 }
