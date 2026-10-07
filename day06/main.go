@@ -28,10 +28,9 @@ func GetIntArr(data []byte) ([]int, error) {
 	return res, nil
 }
 
-func SolvePartOne(intArr []int) {
+func Solve(intArr []int, day int) int {
 
 	var fish int
-	day := 80
 
 	var dfs func(timer int, d int)
 	dfs = func(timer int, d int) {
@@ -50,14 +49,13 @@ func SolvePartOne(intArr []int) {
 	for _, i := range intArr {
 		dfs(i, 0)
 	}
-	fmt.Println(fish)
+	return fish
 
 }
 
-func SolvePartOneMemo(intArr []int) {
+func SolveMemo(intArr []int, day int) int {
 
 	var fish int
-	day := 80
 
 	mp := make(map[Fish]int)
 
@@ -98,7 +96,7 @@ func SolvePartOneMemo(intArr []int) {
 		})
 	}
 
-	fmt.Println(fish)
+	return fish
 
 }
 
@@ -116,7 +114,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	SolvePartOne(intArr)
-	SolvePartOneMemo(intArr)
+	res := Solve(intArr, 80)
+	fmt.Println(res)
+
+	resMemo := SolveMemo(intArr, 80)
+	fmt.Println(resMemo)
 
 }
