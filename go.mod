@@ -2,4 +2,4 @@ module aoc-2021
 
 go 1.27.1
 
-require github.com/kevin-kho/aoc-utilities v1.1.0
+require github.com/kevin-kho/aoc-utilities v1.2.0
