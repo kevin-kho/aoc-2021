@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/kevin-kho/aoc-utilities/common"
+	"github.com/kevin-kho/aoc-utilities/models"
 )
 
 type Action string
@@ -19,8 +20,7 @@ const (
 )
 
 type Pos struct {
-	X   int
-	Y   int
+	models.Pos
 	Aim int
 }
 

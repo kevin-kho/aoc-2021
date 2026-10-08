@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 
 	"github.com/kevin-kho/aoc-utilities/common"
 )
@@ -12,20 +10,6 @@ import (
 type Fish struct {
 	Timer int
 	Day   int
-}
-
-func GetIntArr(data []byte) ([]int, error) {
-	var res []int
-	for entry := range strings.SplitSeq(string(data), ",") {
-		i, err := strconv.Atoi(entry)
-		if err != nil {
-			return res, err
-		}
-
-		res = append(res, i)
-	}
-
-	return res, nil
 }
 
 func Solve(intArr []int, day int) int {
@@ -109,7 +93,7 @@ func main() {
 	}
 	data = common.TrimNewLineSuffix(data)
 
-	intArr, err := GetIntArr(data)
+	intArr, err := common.ParseIntArray(data, []byte{','})
 	if err != nil {
 		log.Fatal(err)
 	}

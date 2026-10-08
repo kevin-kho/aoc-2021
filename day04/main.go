@@ -7,17 +7,13 @@ import (
 	"strings"
 
 	"github.com/kevin-kho/aoc-utilities/common"
+	"github.com/kevin-kho/aoc-utilities/models"
 )
 
-type Pos struct {
-	X int
-	Y int
-}
-
 type Board struct {
-	ValMp   map[int]Pos // if it's used, delete from map
-	RowMp   map[int]int // key: row#, value: count (start at 5)
-	ColMp   map[int]int // key: col#, value: count (start at 5)
+	ValMp   map[int]models.Pos // if it's used, delete from map
+	RowMp   map[int]int        // key: row#, value: count (start at 5)
+	ColMp   map[int]int        // key: col#, value: count (start at 5)
 	UsedVal []int
 }
 
@@ -48,7 +44,7 @@ func GetNumbers(data []byte) ([]int, error) {
 }
 
 func CreateBoard(board []string) (Board, error) {
-	valMp := make(map[int]Pos)
+	valMp := make(map[int]models.Pos)
 	for y, row := range board {
 		row = strings.TrimSpace(row)
 		var formattedRow []string
@@ -64,7 +60,7 @@ func CreateBoard(board []string) (Board, error) {
 				return Board{}, err
 			}
 
-			valMp[valInt] = Pos{
+			valMp[valInt] = models.Pos{
 				X: x,
 				Y: y,
 			}

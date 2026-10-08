@@ -8,41 +8,27 @@ import (
 	"strings"
 
 	"github.com/kevin-kho/aoc-utilities/common"
+	"github.com/kevin-kho/aoc-utilities/models"
 )
 
 type Line struct {
-	Start Pos
-	End   Pos
+	Start models.Pos
+	End   models.Pos
 }
 
-func (l Line) GetVector() Pos {
+func (l Line) GetVector() models.Pos {
 	vecX := l.End.X - l.Start.X
 	vecY := l.End.Y - l.Start.Y
 
-	return Pos{
+	return models.Pos{
 		X: vecX,
 		Y: vecY,
 	}
 
 }
 
-type Pos struct {
-	X int
-	Y int
-}
-
-func (p Pos) GetGcd() int {
-	a, b := common.IntAbs(p.X), common.IntAbs(p.Y)
-	for b != 0 {
-		a, b = b, a%b
-	}
-
-	return a
-
-}
-
-func CreatePos(posStr string) (Pos, error) {
-	var res Pos
+func CreatePos(posStr string) (models.Pos, error) {
+	var res models.Pos
 	xStr, yStr, _ := strings.Cut(posStr, ",")
 	xInt, err := strconv.Atoi(xStr)
 	if err != nil {
@@ -108,7 +94,7 @@ func FilterLines(lines []Line) ([]Line, []Line) {
 
 func SolvePartOne(lines []Line) int {
 
-	mp := make(map[Pos]int)
+	mp := make(map[models.Pos]int)
 
 	straightLines, _ := FilterLines(lines)
 	for _, l := range straightLines {
@@ -144,7 +130,7 @@ func SolvePartOne(lines []Line) int {
 }
 
 func SolvePartTwo(lines []Line) int {
-	mp := make(map[Pos]int)
+	mp := make(map[models.Pos]int)
 
 	for _, l := range lines {
 		d := l.GetVector()

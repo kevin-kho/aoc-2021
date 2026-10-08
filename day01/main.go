@@ -1,31 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/kevin-kho/aoc-utilities/common"
 )
-
-func GetIntArr(data []byte) ([]int, error) {
-	var res []int
-
-	for entry := range bytes.Lines(data) {
-		entry = bytes.TrimSpace(entry)
-		i, err := strconv.Atoi(string(entry))
-		if err != nil {
-			return res, err
-		}
-
-		res = append(res, i)
-
-	}
-
-	return res, nil
-
-}
 
 func SolvePartOne(intArr []int) int {
 	var count int
@@ -64,7 +44,7 @@ func main() {
 	}
 	data = common.TrimNewLineSuffix(data)
 
-	intArr, err := GetIntArr(data)
+	intArr, err := common.ParseIntArray(data, []byte{'\n'})
 	if err != nil {
 		log.Fatal(err)
 	}

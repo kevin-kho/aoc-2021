@@ -43,7 +43,7 @@ func main() {
 	}
 	data = common.TrimNewLineSuffix(data)
 
-	intArr, err := common.ParseIntArray(data)
+	intArr, err := common.ParseIntArray(data, []byte{','})
 	if err != nil {
 		log.Fatal(err)
 	}
