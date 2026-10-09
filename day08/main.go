@@ -59,7 +59,18 @@ func GetSignal(data []byte) []Signal {
 		ptrn, out, _ := strings.Cut(entry, " | ")
 
 		ptrnArr := strings.Split(ptrn, " ")
+		for i, pattern := range ptrnArr {
+			runes := []rune(pattern)
+			slices.Sort(runes)
+			ptrnArr[i] = string(runes)
+
+		}
 		outArr := strings.Split(out, " ")
+		for i, output := range outArr {
+			runes := []rune(output)
+			slices.Sort(runes)
+			outArr[i] = string(runes)
+		}
 
 		res = append(res, Signal{
 			Pattern: ptrnArr,
@@ -88,15 +99,10 @@ func SolvePartOne(signals []Signal) int {
 
 }
 
-func SolvePartTwo(signals []Signal) {
-	var patterns []string
-	var outputs []string
+func GetStringMap(signal Signal) {
 	digitMap := make(map[int]Digit)
 
-	patterns = append(patterns, signals[0].Pattern...)
-	outputs = append(outputs, signals[0].Output...)
-
-	combined := slices.Concat(patterns, outputs)
+	combined := slices.Concat(signal.Pattern, signal.Output)
 
 	mp := make(map[int]map[string]bool) // key: len, value: pattern & output
 
@@ -105,9 +111,6 @@ func SolvePartTwo(signals []Signal) {
 			mp[len(c)] = make(map[string]bool)
 
 		}
-		r := []rune(c)
-		slices.Sort(r)
-		c = string(r)
 		mp[len(c)][c] = true
 	}
 
@@ -168,7 +171,6 @@ func SolvePartTwo(signals []Signal) {
 	// Determine 6 and 0
 	// 6 fully contains 5
 	// remaining one is zero
-
 	for str := range mp[6] {
 		containsAll := true
 		for r := range digitMap[5].Runes {
@@ -186,8 +188,10 @@ func SolvePartTwo(signals []Signal) {
 		}
 	}
 
-	for val, digit := range digitMap {
-		fmt.Println(val, digit)
+	stringMap := make(map[string]Digit)
+	for _, digit := range digitMap {
+		stringMap[digit.StringRep] = digit
+		fmt.Println(digit.StringRep, digit)
 	}
 
 }
@@ -206,6 +210,6 @@ func main() {
 	res := SolvePartOne(signals)
 	fmt.Println(res)
 
-	SolvePartTwo(signals)
+	GetStringMap(signals[0])
 
 }
