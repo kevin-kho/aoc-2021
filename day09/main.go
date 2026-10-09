@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"slices"
 
 	"github.com/kevin-kho/aoc-utilities/common"
 	"github.com/kevin-kho/aoc-utilities/models"
@@ -78,6 +79,56 @@ func SolvePartOne(grid Grid) int {
 
 }
 
+func SolvePartTwoDfs(grid Grid) int {
+	lowPoints := grid.GetLowPoints()
+	var basins []int
+	X := grid.X
+	Y := grid.Y
+	deltas := models.GetDeltas()
+	seen := make(map[models.Pos]bool)
+
+	var dfs func(p models.Pos) int
+	dfs = func(p models.Pos) int {
+		// case: out of bounds
+		if !(0 <= p.X && p.X < X) || !(0 <= p.Y && p.Y < Y) {
+			return 0
+		}
+
+		// case: hit a 9
+		if grid.Board[p.Y][p.X] == '9' {
+			return 0
+		}
+
+		// case: already seen
+		if seen[p] {
+			return 0
+		}
+
+		// visit and continue dfs
+		seen[p] = true
+		res := 1
+		for _, d := range deltas {
+			res += dfs(models.Pos{
+				X: p.X + d.X,
+				Y: p.Y + d.Y,
+			})
+		}
+
+		return res
+	}
+
+	for _, lp := range lowPoints {
+		val := dfs(lp.Pos)
+		basins = append(basins, val)
+	}
+
+	slices.Sort(basins)
+	slices.Reverse(basins)
+
+	return basins[0] * basins[1] * basins[2]
+
+}
+
 func main() {
 	// data, err := common.ReadInput("inputExample.txt")
 	data, err := common.ReadInput("input.txt")
@@ -89,5 +140,8 @@ func main() {
 	grid := GetGrid(data)
 	res := SolvePartOne(grid)
 	fmt.Println(res)
+
+	res2Dfs := SolvePartTwoDfs(grid)
+	fmt.Println(res2Dfs)
 
 }
