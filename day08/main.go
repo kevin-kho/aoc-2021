@@ -99,7 +99,7 @@ func SolvePartOne(signals []Signal) int {
 
 }
 
-func GetStringMap(signal Signal) {
+func GetStringMap(signal Signal) map[string]Digit {
 	digitMap := make(map[int]Digit)
 
 	combined := slices.Concat(signal.Pattern, signal.Output)
@@ -191,15 +191,33 @@ func GetStringMap(signal Signal) {
 	stringMap := make(map[string]Digit)
 	for _, digit := range digitMap {
 		stringMap[digit.StringRep] = digit
-		fmt.Println(digit.StringRep, digit)
 	}
+
+	return stringMap
+
+}
+
+func SolvePartTwo(signals []Signal) int {
+	var res int
+
+	for _, s := range signals {
+		mp := GetStringMap(s)
+		var val int
+		for _, o := range s.Output {
+			val = val*10 + mp[o].Val
+		}
+
+		res += val
+	}
+
+	return res
 
 }
 
 func main() {
 	// data, err := common.ReadInput("inputExample.txt")
-	// data, err := common.ReadInput("input.txt")
-	data, err := common.ReadInput("inputExamplePartTwo.txt")
+	data, err := common.ReadInput("input.txt")
+	// data, err := common.ReadInput("inputExamplePartTwo.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -210,6 +228,7 @@ func main() {
 	res := SolvePartOne(signals)
 	fmt.Println(res)
 
-	GetStringMap(signals[0])
+	res2 := SolvePartTwo(signals)
+	fmt.Println(res2)
 
 }
