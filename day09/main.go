@@ -129,6 +129,66 @@ func SolvePartTwoDfs(grid Grid) int {
 
 }
 
+func SolvePartTwoBfs(grid Grid) int {
+
+	lowPoints := grid.GetLowPoints()
+	var basins []int
+	X := grid.X
+	Y := grid.Y
+	deltas := models.GetDeltas()
+	seen := make(map[models.Pos]bool)
+	var queue []models.Pos
+
+	for _, lp := range lowPoints {
+		var size int
+		queue = append(queue, lp.Pos)
+
+		for len(queue) > 0 {
+			for range len(queue) {
+				p := queue[0]
+				queue = queue[1:]
+
+				// case: already seen
+				if seen[p] {
+					continue
+				}
+
+				// case: hit a 9
+				if grid.Board[p.Y][p.X] == '9' {
+					continue
+				}
+				size++
+				seen[p] = true
+				for _, d := range deltas {
+					newX := p.X + d.X
+					newY := p.Y + d.Y
+
+					// prevents going out of bounds
+					if !(0 <= newX && newX < X) || !(0 <= newY && newY < Y) {
+						continue
+					}
+
+					queue = append(queue, models.Pos{
+						X: newX,
+						Y: newY,
+					})
+
+				}
+
+			}
+		}
+
+		basins = append(basins, size)
+
+	}
+
+	slices.Sort(basins)
+	slices.Reverse(basins)
+
+	return basins[0] * basins[1] * basins[2]
+
+}
+
 func main() {
 	// data, err := common.ReadInput("inputExample.txt")
 	data, err := common.ReadInput("input.txt")
@@ -143,5 +203,10 @@ func main() {
 
 	res2Dfs := SolvePartTwoDfs(grid)
 	fmt.Println(res2Dfs)
+
+	res2Bfs := SolvePartTwoBfs(grid)
+	fmt.Println(res2Bfs)
+
+	fmt.Println(res2Dfs == res2Bfs)
 
 }
