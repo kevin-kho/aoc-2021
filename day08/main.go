@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"maps"
 	"slices"
 	"strings"
 
@@ -92,11 +93,6 @@ func SolvePartTwo(signals []Signal) {
 	var outputs []string
 	digitMap := make(map[int]Digit)
 
-	// for _, s := range signals {
-	// 	patterns = slices.Concat(patterns, s.Pattern)
-	// 	outputs = slices.Concat(outputs, s.Output)
-	// }
-
 	patterns = append(patterns, signals[0].Pattern...)
 	outputs = append(outputs, signals[0].Output...)
 
@@ -122,11 +118,8 @@ func SolvePartTwo(signals []Signal) {
 		}
 	}
 
-	for length, vals := range mp {
-		fmt.Println(length, vals)
-	}
-
 	// Determine 3
+	// 3 must contain all of 1
 	for str := range mp[5] {
 		found := true
 		for r := range digitMap[1].Runes {
@@ -141,8 +134,9 @@ func SolvePartTwo(signals []Signal) {
 		}
 	}
 
-	// Determine 5
+	// Determine 5 and 2
 	// It will have all chars from 4 except one which is missing from 1 as well
+	// 2 will have all except two which are missing
 	for str := range mp[5] {
 		var missing []rune
 		for r := range digitMap[4].Runes {
@@ -158,6 +152,38 @@ func SolvePartTwo(signals []Signal) {
 			digitMap[2] = CreateDigit(2, str)
 		}
 
+	}
+
+	// Determine 9: digit[5] + digit[1] == 9
+	nineRunes := maps.Clone(digitMap[5].Runes)
+	maps.Copy(nineRunes, digitMap[1].Runes)
+
+	digitMap[9] = Digit{
+		Val:       9,
+		StringRep: string(slices.Sorted(maps.Keys(nineRunes))),
+		Runes:     nineRunes,
+	}
+	delete(mp[6], digitMap[9].StringRep)
+
+	// Determine 6 and 0
+	// 6 fully contains 5
+	// remaining one is zero
+
+	for str := range mp[6] {
+		containsAll := true
+		for r := range digitMap[5].Runes {
+			if !strings.ContainsRune(str, r) {
+				containsAll = false
+			}
+		}
+
+		switch containsAll {
+		case true:
+			digitMap[6] = CreateDigit(6, str)
+		case false:
+			digitMap[0] = CreateDigit(0, str)
+
+		}
 	}
 
 	for val, digit := range digitMap {
