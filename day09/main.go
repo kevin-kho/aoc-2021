@@ -15,6 +15,39 @@ type Grid struct {
 	Board [][]byte
 }
 
+func (g Grid) GetLowPoints() []LowPoint {
+	deltas := models.GetDeltas()
+	var res []LowPoint
+
+	for x := range g.X {
+		for y := range g.Y {
+
+			val := g.Board[y][x]
+			lowPoint := true
+			for _, d := range deltas {
+				newX, newY := x+d.X, y+d.Y
+				if !(0 <= newX && newX < g.X) || !(0 <= newY && newY < g.Y) {
+					continue
+				}
+				if val >= g.Board[newY][newX] {
+					lowPoint = false
+				}
+
+			}
+			if lowPoint {
+				res = append(res, LowPoint{
+					X:   x,
+					Y:   y,
+					Val: int(val - '0'),
+				})
+			}
+
+		}
+	}
+
+	return res
+}
+
 type LowPoint struct {
 	models.Pos
 	Val int
@@ -34,34 +67,7 @@ func GetGrid(data []byte) Grid {
 
 func SolvePartOne(grid Grid) int {
 
-	var lowPoints []LowPoint
-	deltas := models.GetDeltas()
-
-	for x := range grid.X {
-		for y := range grid.Y {
-
-			val := grid.Board[y][x]
-			lowPoint := true
-			for _, d := range deltas {
-				newX, newY := x+d.X, y+d.Y
-				if !(0 <= newX && newX < grid.X) || !(0 <= newY && newY < grid.Y) {
-					continue
-				}
-				if val >= grid.Board[newY][newX] {
-					lowPoint = false
-				}
-
-			}
-			if lowPoint {
-				lowPoints = append(lowPoints, LowPoint{
-					X:   x,
-					Y:   y,
-					Val: int(val - '0'),
-				})
-			}
-
-		}
-	}
+	lowPoints := grid.GetLowPoints()
 
 	var res int
 	for _, lp := range lowPoints {
