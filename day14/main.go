@@ -41,9 +41,9 @@ func CreateMap(data []byte) map[string]string {
 	return res
 }
 
-func SolvePartOne(original string, mp map[string]string) int {
+func Solve(original string, mp map[string]string, steps int) int {
 
-	for range 10 {
+	for range steps {
 
 		var newElements []string
 		for i := 1; i < len(original); i++ {
@@ -79,8 +79,8 @@ func main() {
 
 	mp := CreateMap(data)
 
-	// res := SolvePartOne("NNCB", mp)
-	res := SolvePartOne("PBVHVOCOCFFNBCNCCBHK", mp)
+	// res := SolvePartOne("NNCB", mp, 10)
+	res := Solve("PBVHVOCOCFFNBCNCCBHK", mp, 10)
 
 	fmt.Println(res)
 }
