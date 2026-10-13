@@ -60,51 +60,55 @@ func SolvePartOne(adj map[string][]string) {
 
 func SolvePartTwo(adj map[string][]string) {
 
-	seen := make(map[string]int)
+	seen := make(map[string]bool)
 
-	var dfs func(curr string) int
-	dfs = func(curr string) int {
+	var dfs func(curr string, smallCaveVisited string) int
+	dfs = func(curr string, smallCaveVisited string) int {
 
 		// exit condition: reach the end
 		if curr == "end" {
 			return 1
 		}
 
-		if curr == "start" && seen[curr] > 0 {
+		if curr == "start" && seen[curr] {
 			return 0
 		}
 
-		// exit condition: seen at least 2 times
-		if seen[curr] > 1 {
+		// exit condition
+		if seen[curr] && smallCaveVisited != "" {
 			return 0
+		}
+
+		if seen[curr] {
+			smallCaveVisited = curr
 		}
 
 		// set visited if small cave
 		if unicode.IsLower(rune(curr[0])) {
-			seen[curr]++
+			seen[curr] = true
 		}
 		var val int
 		for _, nei := range adj[curr] {
-			val += dfs(nei)
+			val += dfs(nei, smallCaveVisited)
 		}
 
-		if unicode.IsLower(rune(curr[0])) {
-			seen[curr]--
+		if smallCaveVisited != curr {
+			seen[curr] = false
 		}
 
 		return val
 	}
 
-	res := dfs("start")
+	res := dfs("start", "")
 	fmt.Println(res)
 
 }
 
 func main() {
-	data, err := common.ReadInput("inputExample.txt")
+	// data, err := common.ReadInput("inputExample.txt")
 	// data, err := common.ReadInput("inputExample2.txt")
 	// data, err := common.ReadInput("inputExample3.txt")
-	// data, err := common.ReadInput("input.txt")
+	data, err := common.ReadInput("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
