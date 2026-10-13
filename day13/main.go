@@ -69,6 +69,41 @@ func (p *Paper) FoldAlongY(y int) {
 
 }
 
+func (p Paper) PrintPaper() {
+	X := 0
+	Y := 0
+	for pos := range p.Points {
+		X = max(X, pos.X)
+		Y = max(Y, pos.Y)
+	}
+	X++
+	Y++
+
+	var grid [][]string
+	for range Y {
+		row := make([]string, X)
+		grid = append(grid, row)
+	}
+
+	for y := range Y {
+		for x := range X {
+			var b string
+			if p.Points[models.Pos{x, y}] {
+				b = "#"
+			} else {
+				b = "."
+			}
+			grid[y][x] = b
+
+		}
+	}
+
+	for _, row := range grid {
+		fmt.Println(row)
+	}
+
+}
+
 func CreatePoints(data []byte) (map[models.Pos]bool, error) {
 	res := make(map[models.Pos]bool)
 	for entry := range bytes.SplitSeq(data, []byte{'\n'}) {
@@ -129,15 +164,36 @@ func CreateFolds(data []byte) ([]Fold, error) {
 	return res, nil
 }
 
+func Solve(paper Paper, folds []Fold) {
+	var dotCount []int
+	for _, f := range folds {
+		switch f.Axis {
+		case "x":
+			paper.FoldAlongX(f.Val)
+		case "y":
+			paper.FoldAlongY(f.Val)
+		}
+
+		dotCount = append(dotCount, len(paper.Points))
+	}
+
+	fmt.Println(dotCount[0]) // Part One
+
+	paper.PrintPaper() // Part Two
+
+}
+
 func main() {
 
-	pointData, err := common.ReadInput("inputPointsExample.txt")
+	// pointData, err := common.ReadInput("inputPointsExample.txt")
+	pointData, err := common.ReadInput("inputPoints.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	pointData = common.TrimNewLineSuffix(pointData)
 
-	foldData, err := common.ReadInput("inputFoldsExample.txt")
+	// foldData, err := common.ReadInput("inputFoldsExample.txt")
+	foldData, err := common.ReadInput("inputFolds.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -147,12 +203,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(paper)
 
 	folds, err := CreateFolds(foldData)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(folds)
+
+	Solve(paper, folds)
 
 }
