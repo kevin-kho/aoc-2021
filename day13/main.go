@@ -21,10 +21,51 @@ type Paper struct {
 }
 
 func (p *Paper) FoldAlongX(x int) {
+	// Keep everything to the left of X
+	// Points are guarantted to never be along X
+	keep := make(map[models.Pos]bool)
+	toMirror := make(map[models.Pos]bool)
+	for pos := range p.Points {
+		if pos.X < x {
+			keep[pos] = true
+		} else {
+			toMirror[pos] = true
+		}
+	}
+
+	// points to the right of x must be mirrored to the left
+	// mirror by pos.X -= abs(pos.X - x) * 2
+	for pos := range toMirror {
+		pos.X -= (common.IntAbs(pos.X-x) * 2)
+		keep[pos] = true
+	}
+
+	p.Points = keep
 
 }
 
 func (p *Paper) FoldAlongY(y int) {
+	// Keep everything above of Y
+	// Points are guaranteed to never be along Y
+
+	keep := make(map[models.Pos]bool)
+	toMirror := make(map[models.Pos]bool)
+	for pos := range p.Points {
+		if pos.Y < y {
+			keep[pos] = true
+		} else {
+			toMirror[pos] = true
+		}
+	}
+
+	// points to the bottom of y must be mirrored up
+	// mirror by pos.Y -= abs(pos.Y - y) * 2
+	for pos := range toMirror {
+		pos.Y -= (common.IntAbs(pos.Y-y) * 2)
+		keep[pos] = true
+	}
+
+	p.Points = keep
 
 }
 
