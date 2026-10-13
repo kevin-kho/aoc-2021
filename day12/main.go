@@ -58,11 +58,53 @@ func SolvePartOne(adj map[string][]string) {
 
 }
 
+func SolvePartTwo(adj map[string][]string) {
+
+	seen := make(map[string]int)
+
+	var dfs func(curr string) int
+	dfs = func(curr string) int {
+
+		// exit condition: reach the end
+		if curr == "end" {
+			return 1
+		}
+
+		if curr == "start" && seen[curr] > 0 {
+			return 0
+		}
+
+		// exit condition: seen at least 2 times
+		if seen[curr] > 1 {
+			return 0
+		}
+
+		// set visited if small cave
+		if unicode.IsLower(rune(curr[0])) {
+			seen[curr]++
+		}
+		var val int
+		for _, nei := range adj[curr] {
+			val += dfs(nei)
+		}
+
+		if unicode.IsLower(rune(curr[0])) {
+			seen[curr]--
+		}
+
+		return val
+	}
+
+	res := dfs("start")
+	fmt.Println(res)
+
+}
+
 func main() {
-	// data, err := common.ReadInput("inputExample.txt")
+	data, err := common.ReadInput("inputExample.txt")
 	// data, err := common.ReadInput("inputExample2.txt")
 	// data, err := common.ReadInput("inputExample3.txt")
-	data, err := common.ReadInput("input.txt")
+	// data, err := common.ReadInput("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -70,5 +112,7 @@ func main() {
 	adj := BuildAdjList(data)
 
 	SolvePartOne(adj)
+
+	SolvePartTwo(adj)
 
 }
