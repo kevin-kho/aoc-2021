@@ -79,7 +79,7 @@ func main() {
 
 	mp := CreateMap(data)
 
-	// res := SolvePartOne("NNCB", mp, 10)
+	// res := Solve("NNCB", mp, 10)
 	res := Solve("PBVHVOCOCFFNBCNCCBHK", mp, 10)
 
 	fmt.Println(res)
