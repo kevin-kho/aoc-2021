@@ -69,6 +69,52 @@ func Solve(original string, mp map[string]string, steps int) int {
 
 }
 
+func SolveDfs(original string, mp map[string]string, steps int) int {
+
+	count := make(map[string]int)
+	for _, char := range original {
+		count[string(char)]++
+	}
+
+	var dfs func(l, r string, step int)
+	dfs = func(l, r string, step int) {
+		if step == steps {
+			return
+		}
+
+		mid := mp[l+r]
+		count[mid]++
+
+		dfs(l, mid, step+1)
+		dfs(mid, r, step+1)
+
+	}
+
+	for i := 1; i < len(original); i++ {
+		l := string(original[i-1])
+		r := string(original[i])
+		dfs(l, r, 0)
+	}
+
+	// set mn and mx
+	var mn int
+	var mx int
+	for _, n := range count {
+		mn = n
+		mx = n
+		break
+	}
+
+	// find it
+	for _, n := range count {
+		mn = min(mn, n)
+		mx = max(mx, n)
+	}
+
+	return mx - mn
+
+}
+
 func main() {
 	// data, err := common.ReadInput("inputExample.txt")
 	data, err := common.ReadInput("input.txt")
@@ -81,6 +127,10 @@ func main() {
 
 	// res := Solve("NNCB", mp, 10)
 	res := Solve("PBVHVOCOCFFNBCNCCBHK", mp, 10)
-
 	fmt.Println(res)
+
+	// resDfs := SolveDfs("NNCB", mp, 10)
+	resDfs := SolveDfs("PBVHVOCOCFFNBCNCCBHK", mp, 10)
+	fmt.Println(resDfs)
+
 }
