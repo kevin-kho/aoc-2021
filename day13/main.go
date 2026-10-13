@@ -88,7 +88,7 @@ func (p Paper) PrintPaper() {
 	for y := range Y {
 		for x := range X {
 			var b string
-			if p.Points[models.Pos{x, y}] {
+			if p.Points[models.Pos{X: x, Y: y}] {
 				b = "#"
 			} else {
 				b = "."
