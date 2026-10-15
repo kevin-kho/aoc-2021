@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"slices"
 
 	"github.com/kevin-kho/aoc-utilities/common"
 	"github.com/kevin-kho/aoc-utilities/models"
@@ -23,6 +24,37 @@ func (c Cavern) TotalRisk() int {
 		}
 	}
 	return res
+}
+
+func (c Cavern) Expand(n int) {
+
+	// Expand X
+	for i, row := range c.Grid {
+		var extension []int
+		for j := range n {
+			ext := GetIncrementedRow(row, j+1)
+			extension = slices.Concat(extension, ext)
+		}
+		c.Grid[i] = slices.Concat(row, extension)
+	}
+
+	for _, row := range c.Grid {
+		fmt.Println(row)
+	}
+
+}
+
+func GetIncrementedRow(row []int, n int) []int {
+	res := make([]int, len(row))
+	for i, val := range row {
+		div := (val + n) / 10
+		newVal := (val+n)%10 + div
+
+		res[i] = newVal
+	}
+
+	return res
+
 }
 
 type PosMemo struct {
@@ -157,8 +189,8 @@ func SolveMemo(cavern Cavern) int {
 }
 
 func main() {
-	// data, err := common.ReadInput("inputExample.txt")
-	data, err := common.ReadInput("input.txt")
+	data, err := common.ReadInput("inputExample.txt")
+	// data, err := common.ReadInput("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -169,5 +201,7 @@ func main() {
 	// SolvePartOneNoMemo(c)
 	res := SolveMemo(c)
 	fmt.Println(res)
+
+	c.Expand(4)
 
 }
