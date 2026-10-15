@@ -26,7 +26,7 @@ func (c Cavern) TotalRisk() int {
 	return res
 }
 
-func (c Cavern) Expand(n int) {
+func (c *Cavern) Expand(n int) {
 
 	// Expand X
 	for i, row := range c.Grid {
@@ -38,9 +38,17 @@ func (c Cavern) Expand(n int) {
 		c.Grid[i] = slices.Concat(row, extension)
 	}
 
-	for _, row := range c.Grid {
-		fmt.Println(row)
+	i := 0
+	YMax := c.Y * n
+
+	for i < YMax {
+		newRow := GetIncrementedRow(c.Grid[i], 1)
+		c.Grid = append(c.Grid, newRow)
+		i++
 	}
+
+	c.Y = len(c.Grid)
+	c.X = len(c.Grid[0])
 
 }
 
@@ -189,8 +197,8 @@ func SolveMemo(cavern Cavern) int {
 }
 
 func main() {
-	data, err := common.ReadInput("inputExample.txt")
-	// data, err := common.ReadInput("input.txt")
+	// data, err := common.ReadInput("inputExample.txt")
+	data, err := common.ReadInput("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -202,6 +210,9 @@ func main() {
 	res := SolveMemo(c)
 	fmt.Println(res)
 
+	// Part Two
 	c.Expand(4)
+	res2 := SolveMemo(c)
+	fmt.Println(res2)
 
 }
