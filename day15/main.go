@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"container/heap"
 	"fmt"
 	"log"
 	"slices"
@@ -65,9 +66,31 @@ func GetIncrementedRow(row []int, n int) []int {
 
 }
 
-type PosMemo struct {
+type PosWeighted struct {
 	models.Pos
 	Val int
+}
+
+type PosHeap []PosWeighted
+
+func (h PosHeap) Len() int {
+	return len(h)
+}
+func (h PosHeap) Less(i, j int) bool {
+	return h[i].Val < h[j].Val
+}
+func (h PosHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+func (h *PosHeap) Push(x any) {
+	*h = append(*h, x.(PosWeighted))
+}
+func (h *PosHeap) Pop() any {
+	old := *h
+	n := len(old)
+	element := old[n-1]
+	*h = old[0 : n-1]
+	return element
 }
 
 func CreateCavern(data []byte) Cavern {
@@ -197,6 +220,38 @@ func SolveMemo(cavern Cavern) int {
 	return res - cavern.Grid[0][0]
 }
 
+func SolveDijkstras(cavern Cavern) int {
+	h := &PosHeap{PosWeighted{}}
+	deltas := models.GetDeltas()
+	mp := make(map[models.Pos]int)
+
+	heap.Init(h)
+	for h.Len() > 0 {
+		p := heap.Pop(h).(PosWeighted)
+
+		if _, ok := mp[p.Pos]; ok {
+			continue
+		}
+
+		mp[p.Pos] = p.Val
+		for _, d := range deltas {
+			newX := p.X + d.X
+			newY := p.Y + d.Y
+			if (0 <= newX && newX < cavern.X) && (0 <= newY && newY < cavern.Y) {
+				newP := PosWeighted{
+					X:   newX,
+					Y:   newY,
+					Val: p.Val + cavern.Grid[newY][newX],
+				}
+				heap.Push(h, newP)
+			}
+		}
+	}
+
+	return mp[models.Pos{X: cavern.X - 1, Y: cavern.Y - 1}]
+
+}
+
 func main() {
 	// data, err := common.ReadInput("inputExample.txt")
 	data, err := common.ReadInput("input.txt")
@@ -208,12 +263,16 @@ func main() {
 	c := CreateCavern(data)
 
 	// SolvePartOneNoMemo(c)
-	res := SolveMemo(c)
-	fmt.Println(res)
+	// res := SolveMemo(c)
+	resDijkstras := SolveDijkstras(c)
+	// fmt.Println(res)
+	fmt.Println(resDijkstras)
 
 	// Part Two
 	c.Expand(4)
-	res2 := SolveMemo(c)
-	fmt.Println(res2)
+	// res2 := SolveMemo(c)
+	res2Dijkstras := SolveDijkstras(c)
+	// fmt.Println(res2)
+	fmt.Println(res2Dijkstras)
 
 }
