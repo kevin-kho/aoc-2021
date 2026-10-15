@@ -145,6 +145,7 @@ func SolvePartOneNoMemo(cavern Cavern) int {
 }
 
 // Similar to LeetCode 64: Miniminum Path Sum
+// Only works for part 1
 func SolveMemo(cavern Cavern) int {
 
 	deltas := []models.Pos{
